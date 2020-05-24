@@ -3,7 +3,7 @@
 # environment setup ------------
 set.seed(123)
 library(multigroup) # running Flury's algorithm
-source("simulations/pcpc_test.R")  # loading required functions and packages 
+source("R/pcpc_test.R")  # loading required functions and packages 
 p <-100
 k <- 20
 lambda <- exp(seq(0, 10, by = 0.1))[1:100]

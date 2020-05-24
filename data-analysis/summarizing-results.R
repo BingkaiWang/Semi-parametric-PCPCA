@@ -2,7 +2,7 @@ library(tidyverse)
 library(GGally)
 
 # SM visualization -----
-step2_taskSM <- readRDS("data-analysis/step2_taskSM_RL_1.rds")
+step2_taskSM <- readRDS("data-analysis/step2_taskSM_RL.rds")
 cpc_taskSM <- step2_taskSM$cpc
 plot_data_taskSM <- step2_taskSM$summary_mat
 
