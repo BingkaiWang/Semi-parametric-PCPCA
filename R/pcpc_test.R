@@ -3,6 +3,19 @@ library(pracma) # eigenvalue of a matrix; gramschimdt
 library(MASS)
 library(Matrix)
 
+#' Title
+#'
+#' @param gamma Candidates of common eigenvectors (\hat{\Gamma}_{candi})
+#' @param cov_data a list of covariance matrices
+#' @param ns the number of samples to estimate each covariance matrix.
+#' @param m the number of replicates for parametric simulation.
+#'
+#' @return A list of three objects. Object "cpc_index" tells which columns of gamma are CPC estimates. Object "summary_mat"
+#' gives the information about the sequential testing procedure. Object "cpc" gives the CPC estimates.
+#' @export
+#'
+#' @examples
+#' See the example in pcpc_est.R.
 pcpc_test <- function(gamma, cov_data, ns, m = 100){
   reconstruct_cov_data <- map(cov_data, ~t(gamma) %*% . %*% gamma)
   p <- ncol(gamma)
