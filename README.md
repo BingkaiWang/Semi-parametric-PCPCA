@@ -14,7 +14,7 @@ For details, please see the manuscript [here](https://www.biorxiv.org/content/10
 
 ## Code for data application
 
-The R scripts under the "data-analysis" folder contain the code of data application in the [paper](https://arxiv.org/abs/1910.13954).
+The R scripts under the "data-analysis" folder contain the code of data application in the [paper](https://arxiv.org/abs/1910.13954). The data set is stored at __tfMRI_MOTOR/Data.Rdata__.
 
 ## Code for simulation studies
 
