@@ -1,6 +1,7 @@
 # environment setup ----------
 set.seed(123)
 library(multigroup)
+library(tidyverse)
 library(nlme)
 library(pracma) # eigenvalue of a matrix; gramschimdt
 library(MASS)
@@ -21,7 +22,7 @@ registerDoParallel(cl)
 m <- 1000
 
 # data import and preprocessing ------------
-load("tfMRI_MOTOR_RL/Data.RData")
+load("tfMRI_MOTOR/Data.RData")
 # motion correction and temporal decorrelation
 ts <- ts[ts.indi == 1]
 motion <- motion[ts.indi == 1]

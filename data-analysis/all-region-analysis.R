@@ -3,6 +3,7 @@ set.seed(1234)
 library(multigroup)
 library(nlme)
 library(tseries)
+library(tidyverse)
 source("simulations/pcpc_test.R") # loading required functions and packages 
 # parallelism
 library(foreach)
@@ -33,6 +34,35 @@ ts.mc.filtered <- map(ts.mc, function(d){
   for(j in 1: p){d[,j] <- arma(d[,j], order = c(1,1))$residual}
   d[-1,]
 })
+
+# auto-correlation comparison
+lag.max <- 25
+ac.before <- map(ts.mc, function(d){
+  d <- d[-c(1:5),]
+  map(1:ncol(d), ~acf(d[,.], lag.max = lag.max, plot = F)$acf) %>% unlist %>% matrix(nrow = lag.max+1)
+}) %>% do.call("cbind", .) %>% .[-1,]
+ac.after <- map(ts.mc.filtered, function(d){
+  d <- d[-c(1:5),]
+  map(1:ncol(d), ~acf(d[,.], lag.max = lag.max, plot = F)$acf) %>% unlist %>% matrix(nrow = lag.max+1)
+}) %>% do.call("cbind", .) %>% .[-1,]
+
+plot.ac <- data.frame(Lag = factor(rep(1:lag.max, 2)), y = c(rowMeans(ac.before), rowMeans(ac.after)),
+                      sd = c(apply(ac.before,1,sd), apply(ac.after,1,sd)),
+                      y_lower = c(map_dbl(1:lag.max, ~quantile(ac.before[.,], 0.05)), map_dbl(1:lag.max, ~quantile(ac.after[.,], 0.05))),
+                      y_upper = c(map_dbl(1:lag.max, ~quantile(ac.before[.,], 0.95)), map_dbl(1:lag.max, ~quantile(ac.after[.,], 0.95))),
+                      Label = rep(c("Before", "After"), each = lag.max)
+                      )
+ggplot(filter(plot.ac, Lag %in% 1:15)) +
+  geom_point(aes(x=Lag, y = y, color = Label), size = 4, position = position_dodge(width = 0.7)) +
+  geom_errorbar(aes(x = Lag,  ymin = y_lower, ymax = y_upper, color = Label), size = 1.2, width = 0.7, position = position_dodge(width = 0.7)) +
+  theme_bw() +
+  theme(text = element_text(size = 35), 
+        legend.position = c(0.85,0.85), 
+        legend.text = element_text(size = 30), 
+        legend.key.size = unit(2, "cm"), 
+        legend.title = element_blank()) + 
+  scale_y_continuous(name="Autocorrelation", limits=c(-0.25, 0.75))
+ggsave("auto-correlation.png", width = 18, height =10)
 
 # correlation analysis on all regions -----------
 task_cor <- map(ts.mc.filtered, ~cor(.))
